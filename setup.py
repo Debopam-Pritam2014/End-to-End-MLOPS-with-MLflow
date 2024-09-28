@@ -20,6 +20,7 @@ setup(
     name="mlproject",
     version="0.0.1",
     author="Pritam",
+    description="This is a demo end to end machine learning project.",
     author_email="letsdecode2014@gmail.com",
     packages=find_packages(),
     # install_requires=["pandas","numpy"],
