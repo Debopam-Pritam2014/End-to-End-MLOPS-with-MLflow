@@ -1,0 +1,1 @@
+# Components are like modules in a project.
