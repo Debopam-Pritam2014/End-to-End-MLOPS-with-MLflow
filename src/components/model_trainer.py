@@ -38,17 +38,76 @@ class ModelTrainer:
                 "Extra Tree":ExtraTreesRegressor(),
                 "K-Neighbors Regressor":KNeighborsRegressor()
             }
+
+            params = {
+                    "Linear Regression": {
+                        "fit_intercept": [True, False],
+                        # "normalize": [True, False]
+                    },
+                    "Lasso": {
+                        "alpha": [0.1, 0.5, 1, 5],
+                        # "max_iter": [1000, 5000, 10000],
+                        # "tol": [0.001, 0.01, 0.1],
+                        # "random_state": [42]
+                    },
+                    "Ridge": {
+                        "alpha": [0.1, 0.5, 1,5],
+                        # "max_iter": [20,50,100,200,300,500],
+                        # "tol": [0.001, 0.002,0.0001,0.0008, 0.1],
+                        # "random_state": [42]
+                    },
+                    "Decision Tree": {
+                        "max_depth": [None, 3, 5, 10],
+                        "min_samples_split": [2, 5],
+                        # "min_samples_leaf": [1, 5, 10],
+                        # "random_state": [42]
+                    },
+                    "Random Forest": {
+                        "n_estimators": [ 50, 100],
+                        "max_depth": [None, 3, 5],
+                        # "min_samples_split": [2, 5, 10],
+                        # "min_samples_leaf": [1, 5, 10],
+                        # "random_state": [42]
+                    },
+                    "Ada Boost": {
+                        "n_estimators": [ 50, 100],
+                        "learning_rate": [0.1, 0.2],
+                        # "loss": ["linear", "square", "exponential"],
+                        # "random_state": [42]
+                    },
+                    "Gradient Boost": {
+                        "n_estimators": [50, 100],
+                        # "learning_rate": [0.1, 0.5, 1],
+                        # "max_depth": [3, 5, 10],
+                        # "min_samples_split": [2, 5, 10],
+                        # "min_samples_leaf": [1, 5, 10],
+                        # "random_state": [42]
+                    },
+                    "Extra Tree": {
+                        "n_estimators": [10, 50, 100, 200],
+                        # "max_depth": [None, 3, 5, 10],
+                        # "min_samples_split": [2, 5, 10],
+                        # "min_samples_leaf": [1, 5, 10],
+                        # "random_state": [42]
+                    },
+                    "K-Neighbors Regressor": {
+                        "n_neighbors": [3, 5, 10],
+                        # "weights": ["uniform", "distance"],
+                        # "algorithm": ["auto", "ball_tree", "kd_tree", "brute"],
+                        # "leaf_size": [10, 30, 50]
+                    }
+                }
             # eval_model function is present inside utils
-            models_report:str=evaluate_model(X_train,y_train,X_test,y_test,models)
+            models_report = evaluate_model(X_train, y_train, X_test, y_test, models, params)
 
-            #to get the best model score
-            best_model_score=max(sorted(models_report.values()))
 
-            # to get the best model name
-            best_model_name=list(models_report.keys())[
-                list(models_report.values()).index(best_model_score)
-            ]
-            best_model=models[best_model_name]
+            # to get the best model and its score
+            best_model_info = max(models_report.items(), key=lambda item: item[1]['test_score'])
+            best_model_name = best_model_info[0]
+            best_model_score = best_model_info[1]['test_score']
+            best_model = models[best_model_name]
+            best_model_params = best_model_info[1]['best_params']
+            logging.info(f"Best model:{best_model_name}, score: {best_model_score}, Params: {best_model_params}")
 
             if best_model_score<0.6:
                 raise CustomException("No best model found",sys)
@@ -59,10 +118,10 @@ class ModelTrainer:
                 obj=best_model
             )
             
-            prediction=best_model.predict(X_test)
-            score=r2_score(y_test,prediction)
+            # prediction=best_model.predict(X_test)
+            # score=r2_score(y_test,prediction)
             # return score
-            return (score,best_model_name)
+            return (best_model_score,best_model_name,best_model_params)
 
 
         

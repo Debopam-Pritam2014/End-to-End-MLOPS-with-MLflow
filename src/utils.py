@@ -8,6 +8,7 @@ from src.exception_handler import CustomException
 import dill
 from src.logger import logging
 from sklearn.metrics import r2_score
+from sklearn.model_selection import GridSearchCV
 
 
 def save_object(file_path,obj):
@@ -21,21 +22,27 @@ def save_object(file_path,obj):
         raise CustomException(e,sys)
 # used in data transformation to save the pickle file of preprocessor
 
-def evaluate_model(X_train,y_train,X_test,y_test,models):
+def evaluate_model(X_train, y_train, X_test, y_test, models, params):
     try:
-        reports={}
-        for i in range(len(models)):
-            model=list(models.values())[i]
-            model.fit(X_train,y_train) #model training
+        reports = {}
+        for model_name, model in models.items():
+            grid_search = GridSearchCV(model, params[model_name], cv=5)
+            grid_search.fit(X_train, y_train)
 
-            y_train_pred=model.predict(X_train)
-            y_test_pred=model.predict(X_test)
-            model_train_score=r2_score(y_train_pred,y_train)
-            model_test_score=r2_score(y_test_pred,y_test)
-            reports[list(models.keys())[i]]=model_test_score
+            best_model = grid_search.best_estimator_
+            y_train_pred = best_model.predict(X_train)
+            y_test_pred = best_model.predict(X_test)
+            model_train_score = r2_score(y_train, y_train_pred)
+            model_test_score = r2_score(y_test, y_test_pred)
+
+            reports[model_name] = {
+                "best_params": grid_search.best_params_,
+                "train_score": model_train_score,
+                "test_score": model_test_score
+            }
+
         return reports
 
-
     except Exception as e:
-        raise CustomException(e,sys)
+        raise CustomException(e, sys)
 
