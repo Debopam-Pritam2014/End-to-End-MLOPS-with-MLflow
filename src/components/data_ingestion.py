@@ -5,8 +5,12 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass #used to create class variables
 
-
+# testing the data_transformation.py
 from src.components.data_transformation import DataTransformation,DataTransformationConfig
+
+# testing the model_trainer.py
+from src.components.model_trainer import ModelTrainer,ModelTrainerConfig
+
 
 # where i have to save the raw data, train and tesr data
 
@@ -50,7 +54,10 @@ if __name__=="__main__":
     train_df,test_df=obj.initiate_data_ingestion()
 
     data_transformation=DataTransformation()
-    data_transformation.initiate_data_transformation(train_data_path=train_df,test_data_path=test_df)
+    train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data_path=train_df,test_data_path=test_df)
+
+    model_trainer=ModelTrainer()
+    print(model_trainer.initiate_model_trainer(train_arr=train_arr,test_arr=test_arr))
 
 
     
