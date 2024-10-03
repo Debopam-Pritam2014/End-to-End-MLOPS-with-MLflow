@@ -112,6 +112,8 @@ class ModelTrainer:
             if best_model_score<0.6:
                 raise CustomException("No best model found",sys)
             logging.info("Best model found and saving.....")
+            best_model.fit(X_train,y_train)
+            logging.info("Best model training successful.")
 
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,

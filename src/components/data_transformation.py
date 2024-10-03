@@ -41,7 +41,7 @@ class DataTransformation:
             categorical_pipeline=Pipeline(
                 steps=[
                     ("imputer",SimpleImputer(strategy="most_frequent")),
-                    ("one_hot_encoder",OneHotEncoder(sparse_output=False)),
+                    ("one_hot_encoder",OneHotEncoder(sparse_output=False,handle_unknown='ignore')),
                     ("scalar",StandardScaler())
                 ]
             )
@@ -61,6 +61,7 @@ class DataTransformation:
         logging.info("Data transformation initiated....")
 
         try:
+            # read the train and test data
             train_df=pd.read_csv(train_data_path)
             test_df=pd.read_csv(test_data_path)
             logging.info("Read train and test data completed......")

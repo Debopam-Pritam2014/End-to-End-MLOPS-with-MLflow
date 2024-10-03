@@ -16,7 +16,7 @@ from src.components.model_trainer import ModelTrainer,ModelTrainerConfig
 
 @dataclass
 class DataIngestionConfig:
-    raw_data_path:str=os.path.join("artifacts","raw_data.csv")
+    raw_data_path:str=os.path.join("artifacts","complete_data.csv")
     train_data_path:str=os.path.join("artifacts","train.csv")
     test_data_path:str=os.path.join("artifacts","test.csv")
 
@@ -29,7 +29,7 @@ class DataIngestion:
         logging.info("Data Ingestion started...")
         try:
             #Read the data
-            df=pd.read_csv("data/raw_data.csv")
+            df=pd.read_csv("data/complete_data.csv")
             logging.info("Read dataset as dataframe..")
             # make directory for train, test and raw
             os.makedirs(os.path.dirname(self.data_ingestion_config.train_data_path),exist_ok=True)
